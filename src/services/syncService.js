@@ -25,7 +25,16 @@ module.exports = {
   },
 
   async syncTopicTalks() {
-    const url = (Constants.ROUTE_BASE + Constants.TALK_PATH).replace('$@', tag)
-    const topicTalkPage = new TopicTalkPage({ url })
+    const topics = await topicRepo.readAll()
+
+    topics.forEach(topic => {
+      const url = (Constants.ROUTE_BASE + Constants.TALK_PATH).replace('$@', topic.tag)  
+      const topicTalkPage = new TopicTalkPage({ url })
+
+      await topicTalkPage.load()
+      await topicTalkPage.loadItems()
+
+      
+    })
   }
 }
