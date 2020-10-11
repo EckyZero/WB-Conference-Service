@@ -1,5 +1,5 @@
 'use strict'
 
 module.exports = {
-  topicRepo: require('./topicRepo')
+  TopicRepo: require('./TopicRepo')
 }

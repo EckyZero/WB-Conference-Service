@@ -1,7 +1,6 @@
 'use strict'
 
 const { DistinctArray, asyncHelpers } = require('../lib');
-const { transaction } = require('../models/BaseModel')
 const { BaseModel } = require('../models/')
 
 class BaseRepo {
@@ -94,18 +93,18 @@ class BaseRepo {
     return count
   }
 
-  async insertManyIfNotFound(incomingItems, existingTopicIds = null) {
+  async insertManyIfNotFound(incomingItems, existingItemIds = null) {
     let count = 0
     if (!incomingItems || incomingItems.length === 0) {
       return await asyncHelpers.executeSyncAsAsync(() => count)
     } 
     try {
       // get the ids of items that already exist
-      if (!existingTopicIds) {
-        existingTopicIds = this.readAllIds()
+      if (!existingItemIds) {
+        existingItemIds = this.readAllIds()
       }
       // filter out the incoming list to only those that aren't already in the database
-      const insertItems = incomingItems.filter((t) => !existingTopicIds.includes(t[this.model.idColumn]))
+      const insertItems = incomingItems.filter((t) => !existingItemIds.includes(t[this.model.idColumn]))
       // only insert new entries
       count = await this.insertMany(insertItems)
     } catch (e) {
@@ -165,7 +164,7 @@ class BaseRepo {
     } 
     try {
       // delete all the items by id
-      count = await TopicModel.query().delete().whereIn(this.model.idColumn, ids)
+      count = await this.model.query().delete().whereIn(this.model.idColumn, ids)
     } catch (e) {
       console.log(e)
       throw new Error('Error in deleteManyById', e)
@@ -199,3 +198,5 @@ class BaseRepo {
     
   }
 }
+
+module.exports = BaseRepo

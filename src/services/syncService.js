@@ -2,7 +2,9 @@
 
 const { Constants } = require('../configs');
 const { TopicWebPage } = require('../webPages')
-const { topicRepo } = require('../repositories')
+const { TopicRepo } = require('../repositories')
+
+const topicRepo = TopicRepo.init()
 
 module.exports = {
   async syncTopics() {
@@ -13,8 +15,8 @@ module.exports = {
       await topicPage.load()
       await topicPage.loadItems()
 
-      const topics = topicPage.items.map((t) => t.toObject())
-      // const topics = require('../../test/mocks/mockTopics.json') // for local testing
+      // const topics = topicPage.items.map((t) => t.toObject())
+      const topics = require('../../test/mocks/mockTopics.json') // for local testing
       const results = await topicRepo.upsertMany(topics)
       console.log(results)
     } catch (e) {
