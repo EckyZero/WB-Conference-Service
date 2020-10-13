@@ -8,6 +8,7 @@ class WebPage {
     this.url = url;
     this.html = null;
     this.items = [];
+    this.metadata = null;
   }
 
   async load() {
@@ -26,7 +27,7 @@ class WebPage {
     return this.html
   }
 
-  async loadItems() {
+  async loadItems(metadata = null) {
     throw new Error('WebPage loadItems() to be overridden by children')
   }
 

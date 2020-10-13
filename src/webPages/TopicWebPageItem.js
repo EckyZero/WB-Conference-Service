@@ -14,7 +14,7 @@ class TopicWebPageItem extends WebPageItem {
 
   get id() {
     if (!this.#id) {
-      this.#id = new UUID(this.tag)
+      this.#id = UUID.init(this.tag)
     }
     return this.#id;
   }

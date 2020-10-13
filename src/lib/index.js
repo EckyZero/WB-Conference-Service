@@ -3,5 +3,7 @@
 module.exports = {
   DistinctArray: require('./DistinctArray'),
   UUID: require('./UUID'),
-  asyncHelpers: require('./asyncHelpers')
+  asyncHelpers: require('./asyncHelpers'),
+  nameParser: require('./nameParser'),
+  dateParser: require('./dateParser')
 }

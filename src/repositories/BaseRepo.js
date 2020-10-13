@@ -19,7 +19,7 @@ class BaseRepo {
     try {
       // see if there are any matches for the incoming values in the db
       const existingIds = await this.readAllIds()    
-      const transaction = await BaseModel.startTransaction()
+      transaction = await BaseModel.startTransaction()
 
       // clear away any records not in the upsert - we want the database to only have what we have here
       const deleteCount = await this.deleteManyByIdIfNotFound(distinctItems, existingIds)
@@ -38,6 +38,38 @@ class BaseRepo {
     }
     console.log(`${JSON.stringify(result)} records upserted in ${this.model.tableName}`)
     return result
+  }
+
+  async upsert(item) {
+    let count = 0
+    let action
+    
+    try {
+      const existingItem = await this.readById(item[this.model.idColumn])
+      if (existingItem) {
+        count = await this.update(item)
+        action = 'updated'
+      } else {
+        count = await this.insert(item)
+        action = 'inserted'
+      }
+    } catch (e) {
+      console.log(e)
+      throw new Error('Error in upsert', e)
+    }
+    console.log(`${count} records ${action} in ${this.model.tableName}`)
+    return count
+  }
+
+  async readById(id) {
+    let item
+    try {
+      item = await this.model.query().findById(id)
+    } catch (e) {
+      console.log(e)
+      throw new Error('Error in readById', e)
+    }
+    return item
   }
 
   async readAll() {
@@ -76,6 +108,19 @@ class BaseRepo {
     return results
   }
 
+  async insert(item) {
+    let count = 0
+    try {
+      await this.model.query().insert(item)
+      count++
+    } catch (e) {
+      console.log(e)
+      throw new Error('Error in insert', e)
+    }
+    console.log(`${count} records inserted in ${this.model.tableName}`)
+    return count
+  }
+
   async insertMany(items) {
     let count = 0
     if (!items || items.length === 0) {
@@ -101,7 +146,7 @@ class BaseRepo {
     try {
       // get the ids of items that already exist
       if (!existingItemIds) {
-        existingItemIds = this.readAllIds()
+        existingItemIds = await this.readAllIds()
       }
       // filter out the incoming list to only those that aren't already in the database
       const insertItems = incomingItems.filter((t) => !existingItemIds.includes(t[this.model.idColumn]))
@@ -115,6 +160,19 @@ class BaseRepo {
     return count
   }
 
+  async update(item) {
+    let count = 0
+    try {
+      await this.model.query().findById(item[this.model.idColumn]).patch(item)
+      count++
+    } catch (e) {
+      console.log(e)
+      throw new Error('Error in update', e)
+    }
+    console.log(`update: ${count} records updated in ${this.model.tableName}`)
+    return count
+  }
+
   async updateMany(items) {
     let count = 0
     if (!items || items.length === 0) {
@@ -124,7 +182,7 @@ class BaseRepo {
       for (let i = 0; i < items.length; i++) {
         const item = items[i]
         await this.model.query()
-            .updateAndFetchById(item[this.model.idColumn], item)
+            .patchAndFetchById(item[this.model.idColumn], item)
         count++
       }
     } catch (e) {
@@ -143,7 +201,7 @@ class BaseRepo {
     try {
       // get the ids of items that already exist
       if (!existingItemIds) {
-        existingItemIds = this.readAllIds()
+        existingItemIds = await this.readAllIds()
       }
       // find which incoming items are already in the database so we can update them
       const updateItems = incomingItems.filter((t) => existingItemIds.includes(t[this.model.idColumn]))
@@ -183,7 +241,7 @@ class BaseRepo {
       const incomingIds = incomingItems.map((t) => t[this.model.idColumn])
       // get the ids of items that already exist
       if (!existingItemIds) {
-        existingItemIds = this.readAllIds()
+        existingItemIds = await this.readAllIds()
       }
       // find which items are in the database, but not in the incoming payload
       const deleteItemIds = existingItemIds.filter((t) => !incomingIds.includes(t)) 

@@ -1,9 +1,10 @@
 'use strict'
 
 class WebPageItem {
-  constructor({ $, el }) {
+  constructor({ $, el, parentPage }) {
     this.$ = $;
     this.el = el;
+    this.parentPage = parentPage
   }
 
   toObject() {

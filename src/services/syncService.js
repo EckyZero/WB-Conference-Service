@@ -1,10 +1,11 @@
 'use strict'
 
 const { Constants } = require('../configs');
-const { TopicWebPage } = require('../webPages')
-const { TopicRepo } = require('../repositories')
+const { TopicTalksWebPage } = require('../webPages')
+const { TopicRepo, TalkRepo } = require('../repositories')
 
 const topicRepo = TopicRepo.init()
+const talkRepo = TalkRepo.init()
 
 module.exports = {
   async syncTopics() {
@@ -25,16 +26,27 @@ module.exports = {
   },
 
   async syncTopicTalks() {
-    const topics = await topicRepo.readAll()
+    let topics = await topicRepo.readAll()
+    topics = [topics[0]]
+    try {
+      topics.forEach(async (topic) => {
+        // const url = (Constants.ROUTE_BASE + Constants.ROUTE_PATH_TALKS).replace('$@', topic.tag)  
+        // const topicTalkPage = new TopicTalksWebPage({ url })
 
-    topics.forEach(topic => {
-      const url = (Constants.ROUTE_BASE + Constants.TALK_PATH).replace('$@', topic.tag)  
-      const topicTalkPage = new TopicTalkPage({ url })
-
-      await topicTalkPage.load()
-      await topicTalkPage.loadItems()
-
-      
-    })
+        // await topicTalkPage.load()
+        // await topicTalkPage.loadItems()
+        const topicTalks = require('../../test/mocks/mockTopicTalks-JesusChrist.json')
+        // topicTalks.map((t) => t.topics = [topic])
+        // const topicTalks = topicTalkPage.items.map((t) => {
+          // const talk = t.toObject()
+          // talk.topics = [topic]
+          // return talk
+        // })
+        talkRepo.upsertMany(topicTalks)
+        // TODO: upsert...
+      })
+    } catch (e) {
+      console.log(e)
+    }
   }
 }
