@@ -74,7 +74,12 @@ class TopicTalksWebPageItem extends WebPageItem {
 
   get personPreferredName() {
     if (!this.#personPreferredName) {
-      this.#personPreferredName = this.$(this.el).find('.lumen-tile__content')[0].firstChild.data.trim();
+      const nameTile = this.$(this.el).find('.lumen-tile__content')[0]
+      if (nameTile) {
+        this.#personPreferredName = nameTile.firstChild.data.trim();
+      } else {
+        this.#personPreferredName = "Unknown"
+      }
     }
     return this.#personPreferredName;
   }
@@ -110,7 +115,9 @@ class TopicTalksWebPageItem extends WebPageItem {
 
   get thumbnail() {
     if (!this.#thumbnail) {
-      const route = this.$(this.el).find('.lumen-image__image')[0].attribs['data-src']
+      const imageTile = this.$(this.el).find('.lumen-image__image')[0]
+      if (!imageTile) return undefined // not all talks have thumbnails
+      const route = imageTile.attribs['data-src']
       if (route) {
         if (route.includes('https')) {
           this.#thumbnail = `${route}`

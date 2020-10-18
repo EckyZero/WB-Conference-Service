@@ -10,12 +10,12 @@ class TopicWebPage extends WebPage {
   }
 
   async loadItems() {
-    this.items = this.$('.lumen-content').find('.lumen-tile a').map((i, el) => {
+    const items = this.$('.lumen-content').find('.lumen-tile a').map((i, el) => {
       const options = { $: this.$, el: el }
       const topicItem = new TopicWebPageItem(options)
       return topicItem
     }).get();
-    return this.items
+    this.setItems(items)
   }
 }
 
