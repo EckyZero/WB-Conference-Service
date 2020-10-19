@@ -6,6 +6,9 @@ const BaseRepo = require('./BaseRepo')
 const conferenceRepo = require('./ConferenceRepo').init()
 const personRepo = require('./PersonRepo').init()
 const talkTopicRepo = require('./TalkTopicRepo').init()
+const speakerRepo = require('./SpeakerRepo').init()
+const sessionRepo = require('./SessionRepo').init()
+const callingRepo = require('./CallingRepo').init()
 
 class TalkRepo extends BaseRepo {
 
@@ -39,24 +42,29 @@ class TalkRepo extends BaseRepo {
       transaction = await this.model.startTransaction()
 
       await conferenceRepo.upsert(talk.session.conference)
+      await sessionRepo.upsert(talk.session)
       await personRepo.upsert(talk.speaker.person)
+      await callingRepo.upsert(talk.speaker.calling)
+      await speakerRepo.upsert(talk.speaker)
       await super.upsert(talk)
       
-      for (let i = 0; i < talk.topics.length; i++) {
-        const topic = talk.topics[i]
-        const options = { 
-          talk_topic_uid: UUID.init(`${talk.talk_uid}-${topic.topic_uid}`),
-          topic_uid: topic.topic_uid,
-          talk_uid: talk.talk_uid
+      if (talk.topics) {
+        for (let i = 0; i < talk.topics.length; i++) {
+          const topic = talk.topics[i]
+          const options = { 
+            talk_topic_uid: UUID.init(`${talk.talk_uid}-${topic.topic_uid}`),
+            topic_uid: topic.topic_uid,
+            talk_uid: talk.talk_uid
+          }
+          await talkTopicRepo.upsert(options)
         }
-        await talkTopicRepo.upsert(options)
       }
       transaction.commit()
       success = true
     } catch (e) {
       console.log(e)
-      transaction.rollback()
-      throw new Error('Error in insertTalk', e)
+      await transaction.rollback()
+      throw new Error('Error in upsert Talk', e)
     }
     return success
   }

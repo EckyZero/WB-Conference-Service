@@ -9,7 +9,9 @@ function insert(source, position, value) {
 
 module.exports = {
   init(baseValue) {
-    const value = md5(baseValue)
+    // to ensure an id can be regnerated from variations of the same string, format consistently
+    let trimmedValue = baseValue.trim().toLowerCase().replace(/[^a-zA-Z0-9-]/g,'').replace(' ', '');
+    const value = md5(trimmedValue)
     if (typeof value !== 'string') {
       throw new Error(`Value must be string`)
     }

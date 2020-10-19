@@ -6,5 +6,7 @@ module.exports = {
   ConferenceRepo: require('./ConferenceRepo'),
   PersonRepo: require('./PersonRepo'),
   SpeakerRepo: require('./SpeakerRepo'),
-  TalkTopicRepo: require('./TalkTopicRepo')
+  TalkTopicRepo: require('./TalkTopicRepo'),
+  SessionRepo: require('./SessionRepo'),
+  CallingRepo: require('./CallingRepo')
 }

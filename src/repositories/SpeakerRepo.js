@@ -1,6 +1,6 @@
 'use strict'
 
-const { SpeakerModel } = require('../models')
+const { SpeakerModel, PersonModel } = require('../models')
 const BaseRepo = require('./BaseRepo')
 
 class SpeakerRepo extends BaseRepo {
@@ -11,6 +11,17 @@ class SpeakerRepo extends BaseRepo {
   
   get model() {
     return SpeakerModel
+  }
+
+  async readByPersonId(id) {
+    let result
+    try {
+      result = await SpeakerModel.query().where(PersonModel.idColumn, id)
+    } catch (e) {
+      console.log(`error getting speaker by person id "${id}"`)
+      throw e
+    }
+    return result
   }
 }
 

@@ -9,7 +9,6 @@ class WebPage {
   #url = null;
   #html = null;
   #items = [];
-  #metadata = null;
   #pageNumber = null
   #nextPage = null;
   
@@ -65,9 +64,8 @@ class WebPage {
     return this.#html
   }
 
-  async loadItems(metadata = null) {
+  async loadItems() {
     console.log(`Loading items for page "${this.#pageNumber}"`)
-    this.#metadata = metadata
     if (this.#nextPage) {
       await this.#nextPage.loadItems()
     }

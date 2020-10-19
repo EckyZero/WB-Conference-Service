@@ -6,5 +6,6 @@ module.exports = {
   asyncHelpers: require('./asyncHelpers'),
   nameParser: require('./nameParser'),
   dateParser: require('./dateParser'),
-  timer: require('./timer')
+  timer: require('./timer'),
+  scraperHelper: require('./scraperHelper')
 }

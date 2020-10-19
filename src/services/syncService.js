@@ -1,12 +1,15 @@
 'use strict'
 
 const { Constants } = require('../configs');
-const { TopicTalksWebPage } = require('../webPages')
-const { TopicRepo, TalkRepo } = require('../repositories')
-const { timer } = require('../lib')
+const { TopicTalksWebPage, TalkWebPage } = require('../webPages')
+const { TopicRepo, TalkRepo, PersonRepo, SpeakerRepo } = require('../repositories')
+const { timer, UUID } = require('../lib');
+const { BaseModel } = require('../models');
 
 const topicRepo = TopicRepo.init()
 const talkRepo = TalkRepo.init()
+const personRepo = PersonRepo.init()
+const speakerRepo = SpeakerRepo.init()
 
 module.exports = {
   async syncTopics() {
@@ -52,6 +55,62 @@ module.exports = {
       }
     } catch (e) {
       console.log(e)
+    }
+  },
+
+  async syncTalks() {
+    // await this.fixSpeakers()
+    let talks = await talkRepo.readAll()
+    talks = talks.filter((talk) => !talk.speaker_uid)
+    try {
+      for(let i = 0; i < talks.length; i++) {
+        await timer.sleep(10000)
+
+        const talk = talks[i]
+        const talkPage = new TalkWebPage({ url: talk.reference_url })
+
+        console.log(`Scraping details for talk "${talk.title}"`)
+
+        await talkPage.load(talk)
+
+        const talkDetails = talkPage.toObject()
+
+        await talkRepo.upsert(talkDetails)
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  },
+
+  async fixSpeakers() {
+    const people = await personRepo.readAll()
+
+    for(let i = 0; i < people.length; i++) {
+      const person = people[i] 
+      const oldId = person.person_uid
+      const newId = UUID.init(person.preferred_name)
+      let transaction;
+      try {
+        const speakers = await speakerRepo.readByPersonId(oldId)
+        if (speakers && speakers.length > 0) {
+          transaction = await BaseModel.startTransaction()
+          const speaker = speakers[0]
+          const people = await personRepo.readById(oldId)
+
+          if (people && people.length > 0) {
+            speaker.person_uid = newId;
+          } else {
+            speaker.person_uid = null;
+          }
+  
+          await speakerRepo.update(speaker)
+          await personRepo.updateId(oldId, newId)
+          await transaction.commit()
+        }
+      } catch (e) {
+        console.log(e)
+        await transaction.rollback()
+      }
     }
   }
 }

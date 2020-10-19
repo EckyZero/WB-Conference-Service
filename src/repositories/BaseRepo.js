@@ -41,9 +41,12 @@ class BaseRepo {
   }
 
   async upsert(item) {
+    console.log('Upserting: ' + JSON.stringify(item))
     let count = 0
     let action
     
+    if (!item) return count
+
     try {
       const existingItem = await this.readById(item[this.model.idColumn])
       if (existingItem) {
@@ -190,6 +193,21 @@ class BaseRepo {
       throw new Error('Error in updateMany', e)
     }
     console.log(`updateMany: ${count} records updated in ${this.model.tableName}`)
+    return count
+  }
+
+  async updateId(oldId, newId) {
+    let count = 0
+    try {
+      const updateQuery = {}
+      updateQuery[this.model.idColumn] = newId
+      await this.model.knexQuery().update(updateQuery).where(this.model.idColumn, oldId)
+    } catch (e) {
+      console.log(e)
+      console.log('OLD ID: ' + oldId)
+      console.log('New ID: ' + newId)
+      // throw new Error('Error in updateId', e)
+    }
     return count
   }
 

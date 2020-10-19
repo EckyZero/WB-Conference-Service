@@ -6,5 +6,6 @@ module.exports = {
   TopicWebPage : require('./TopicWebPage'),
   TopicWebPageItem : require('./TopicWebPageItem'),
   TopicTalksWebPage : require('./TopicTalksWebPage'),
-  TopicTalksWebPageItems : require('./TopicTalksWebPageItem')
+  TopicTalksWebPageItems : require('./TopicTalksWebPageItem'),
+  TalkWebPage: require('./TalkWebPage')
 }
