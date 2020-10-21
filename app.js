@@ -2,7 +2,7 @@ const createError = require('http-errors');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const { syncRouter } = require('./src/routes')
+const { syncRouter, topicsRouter, peopleRouter } = require('./src/routes')
 const { AppBootstrapper } = require('./src/bootstrapper')
 const app = express();
 
@@ -13,7 +13,9 @@ app.use(cookieParser());
 
 AppBootstrapper.initialize();
 
-app.use('/sync', syncRouter);
+app.use('/sync', syncRouter)
+app.use('/topics', topicsRouter)
+app.use('/people', peopleRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

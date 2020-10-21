@@ -75,10 +75,10 @@ class BaseRepo {
     return item
   }
 
-  async readAll() {
+  async readAll({orderBy = 'created_at' }) {
     let results
     try {
-      results = await this.model.query()
+      results = await this.model.query().orderBy(orderBy)
     } catch (e) {
       console.log(e)
       throw new Error('Error in readAll', e)

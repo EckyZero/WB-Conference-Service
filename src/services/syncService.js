@@ -59,9 +59,7 @@ module.exports = {
   },
 
   async syncTalks() {
-    // let talks = await talkRepo.readAll()
-    let talks = await talkRepo.readWhereNullPersons()
-    // talks = talks.filter((talk) => talk.description === talk.quote)
+    let talks = await talkRepo.readAll()
     try {
       for(let i = 0; i < talks.length; i++) {
         await timer.sleep(10000)
@@ -81,38 +79,6 @@ module.exports = {
       }
     } catch (e) {
       console.log(e)
-    }
-  },
-
-  async fixSpeakers() {
-    const people = await personRepo.readAll()
-
-    for(let i = 0; i < people.length; i++) {
-      const person = people[i] 
-      const oldId = person.person_uid
-      const newId = UUID.init(person.preferred_name)
-      let transaction;
-      try {
-        const speakers = await speakerRepo.readByPersonId(oldId)
-        if (speakers && speakers.length > 0) {
-          transaction = await BaseModel.startTransaction()
-          const speaker = speakers[0]
-          const people = await personRepo.readById(oldId)
-
-          if (people && people.length > 0) {
-            speaker.person_uid = newId;
-          } else {
-            speaker.person_uid = null;
-          }
-  
-          await speakerRepo.update(speaker)
-          await personRepo.updateId(oldId, newId)
-          await transaction.commit()
-        }
-      } catch (e) {
-        console.log(e)
-        await transaction.rollback()
-      }
     }
   }
 }

@@ -2,6 +2,6 @@
 
 module.exports = {
   syncController : require('./syncController'),
-  talksController: require('./talkController'),
-  topicsController: require('./topicsController')
+  topicsController: require('./topicsController'),
+  peopleController: require('./peopleController')
 }

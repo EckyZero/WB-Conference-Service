@@ -2,5 +2,6 @@
 
 module.exports = {
   syncService : require('./syncService'),
-  topicsService: require('./topicsService')
+  topicsService: require('./topicsService'),
+  peopleService: require('./peopleService')
 }

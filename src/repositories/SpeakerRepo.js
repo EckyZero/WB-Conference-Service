@@ -1,6 +1,6 @@
 'use strict'
 
-const { SpeakerModel, PersonModel } = require('../models')
+const { SpeakerModel, PersonModel, TalkModel } = require('../models')
 const BaseRepo = require('./BaseRepo')
 
 class SpeakerRepo extends BaseRepo {
@@ -13,10 +13,24 @@ class SpeakerRepo extends BaseRepo {
     return SpeakerModel
   }
 
+  async readAllChildren() {
+    let result
+    try {
+
+      const talks = await TalkModel.relatedQuery().withGraphFetched('[session.conference, speaker.[calling, person]]');
+      result = await this.model.query().withGraphFetched('[person, calling]');
+      this.model.join
+    } catch (e) {
+      console.log(`error getting speaker by person id "${id}"`)
+      throw e
+    }
+    return result
+  }
+
   async readByPersonId(id) {
     let result
     try {
-      result = await SpeakerModel.query().where(PersonModel.idColumn, id)
+      result = await this.model.query().where(PersonModel.idColumn, id)
     } catch (e) {
       console.log(`error getting speaker by person id "${id}"`)
       throw e

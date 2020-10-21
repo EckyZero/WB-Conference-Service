@@ -2,5 +2,6 @@
 
 module.exports = {
   syncRouter : require('./syncRouter'),
-  topicsRouter: require('./topicsRouter')
+  topicsRouter: require('./topicsRouter'),
+  peopleRouter: require('./peopleRouter')
 }
