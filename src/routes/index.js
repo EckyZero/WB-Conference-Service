@@ -1,5 +1,6 @@
 'use strict'
 
 module.exports = {
-  syncRouter : require('./syncRouter')
+  syncRouter : require('./syncRouter'),
+  topicsRouter: require('./topicsRouter')
 }

@@ -103,7 +103,13 @@ class TalkWebPage extends WebPage {
       if (!name) {
         name = this.$("#p1")[0]
       } 
-      this.#author = name.firstChild.data
+      if (!name) {
+        name = "unknown"
+      } 
+      if (name.firstChild) {
+        name = name.firstChild.data
+      }
+      this.#author = name
     }
     return this.#author
   }
@@ -294,6 +300,9 @@ class TalkWebPage extends WebPage {
   }
 
   toObject() {
+    if (this.author === 'unknown') {
+      return null
+    }
     return {
       talk_uid: this.#talk.talk_uid,
       description: this.talkDescription,

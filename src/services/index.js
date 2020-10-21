@@ -1,5 +1,6 @@
 'use strict'
 
 module.exports = {
-  syncService : require('./syncService')
+  syncService : require('./syncService'),
+  topicsService: require('./topicsService')
 }

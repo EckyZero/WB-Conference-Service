@@ -4,11 +4,14 @@ const { syncService } = require('../services')
 
 module.exports = {
   async sync(req, res, next) {
-    // const topics = await syncService.syncTopics();
-    // const topicTalk = await syncService.syncTopicTalks();
-    await syncService.syncTalks()
-    res.status(200).send()
+    try {
+      await syncService.syncTopics();
+      await syncService.syncTopicTalks();
+      await syncService.syncTalks()
+    } catch (e) {
+      console.log('An unexpected error occurred syncing conference data', e)
+      return res.status(500).send()
+    }
+    return res.status(200).send()
   }
 }
-
-// TODO: fix 12 speakers that are missing people

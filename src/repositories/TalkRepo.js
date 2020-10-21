@@ -20,6 +20,21 @@ class TalkRepo extends BaseRepo {
     return TalkModel
   }
 
+  async readWhereNullPersons() {
+    let result
+    try {
+      // result = this.model.relatedQuery('speaker').where('person_uid', null)
+      result = this.model.query()
+          .select('talks.*')
+          .join('speakers as speaker', 'talks.speaker_uid', 'speaker.speaker_uid')
+          .where('speaker.person_uid', null)
+    } catch (e) {
+      console.log(e)
+      throw e
+    }
+    return result
+  }
+
   async upsertMany(talks) {
     let success = false
     try {

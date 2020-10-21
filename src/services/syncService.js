@@ -59,9 +59,9 @@ module.exports = {
   },
 
   async syncTalks() {
-    // await this.fixSpeakers()
-    let talks = await talkRepo.readAll()
-    talks = talks.filter((talk) => !talk.speaker_uid)
+    // let talks = await talkRepo.readAll()
+    let talks = await talkRepo.readWhereNullPersons()
+    // talks = talks.filter((talk) => talk.description === talk.quote)
     try {
       for(let i = 0; i < talks.length; i++) {
         await timer.sleep(10000)
@@ -75,7 +75,9 @@ module.exports = {
 
         const talkDetails = talkPage.toObject()
 
-        await talkRepo.upsert(talkDetails)
+        if (talkDetails) {
+          await talkRepo.upsert(talkDetails)
+        }
       }
     } catch (e) {
       console.log(e)
