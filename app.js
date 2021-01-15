@@ -4,8 +4,11 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const { syncRouter, topicsRouter, peopleRouter } = require('./src/routes')
 const { AppBootstrapper } = require('./src/bootstrapper')
+const cors = require('cors');
+
 const app = express();
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

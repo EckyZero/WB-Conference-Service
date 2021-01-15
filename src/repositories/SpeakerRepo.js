@@ -17,7 +17,7 @@ class SpeakerRepo extends BaseRepo {
     let result
     try {
 
-      const talks = await TalkModel.relatedQuery().withGraphFetched('[session.conference, speaker.[calling, person]]');
+      const talks = await TalkModel.query().withGraphFetched('[session.conference, speaker.[calling, person]]');
       result = await this.model.query().withGraphFetched('[person, calling]');
       this.model.join
     } catch (e) {
