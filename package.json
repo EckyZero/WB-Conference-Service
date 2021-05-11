@@ -17,7 +17,7 @@
     "ioredis": "^3.1.4",
     "knex": "0.21.5",
     "knex-db-manager": "0.7.0",
-    "lodash": "4.17.20",
+    "lodash": "4.17.21",
     "md5": "2.3.0",
     "morgan": "~1.9.1",
     "needle": "^2.6.0",
