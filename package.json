@@ -15,7 +15,7 @@
     "http-errors": "~1.6.3",
     "http-status-codes": "2.1.4",
     "ioredis": "^3.1.4",
-    "knex": "0.21.5",
+    "knex": "2.4.0",
     "knex-db-manager": "0.7.0",
     "lodash": "4.17.20",
     "md5": "2.3.0",
